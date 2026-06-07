@@ -31,18 +31,18 @@ const C = {
 
 // ── DATA ─────────────────────────────────────────────────────────────────────
 const PLAN_DEFAULT = [
-  { id: "mesada",       fecha: "1/04",        concepto: "Mesada Guillermina",  monto: 7500,  tipo: "fijo" },
-  { id: "scotia",       fecha: "6/04",        concepto: "Scotiabank",          monto: 9906,  tipo: "tarjeta", urgente: true, usd: 0.33 },
-  { id: "alquiler",     fecha: "10/04",       concepto: "Alquiler",            monto: 32000, tipo: "fijo",    urgente: true },
-  { id: "bbva",         fecha: "13/04",       concepto: "BBVA",                monto: 4153,  tipo: "tarjeta" },
-  { id: "tributos",     fecha: "14/04",       concepto: "Tributos",            monto: 650,   tipo: "fijo" },
-  { id: "santander",    fecha: "20/04",       concepto: "Santander",           monto: 7312,  tipo: "tarjeta", usd: 54.42 },
-  { id: "gascom",       fecha: "20/04",       concepto: "Gastos comunes",      monto: 4500,  tipo: "fijo" },
-  { id: "telfijo",      fecha: "20/04",       concepto: "Teléfono fijo",       monto: 1700,  tipo: "fijo",    variable: true },
-  { id: "celguille",    fecha: "20/04",       concepto: "Cel Guillermina",     monto: 620,   tipo: "fijo" },
-  { id: "calistenia",   fecha: "24/04",       concepto: "Calistenia",          monto: 1990,  tipo: "fijo" },
-  { id: "ute",          fecha: "29/04",       concepto: "UTE (luz)",           monto: 4500,  tipo: "fijo",    variable: true },
-  { id: "debsantander", fecha: "31/04",       concepto: "Débito Santander",    monto: 875,   tipo: "fijo" },
+  { id: "mesada",       fecha: "1/06",        concepto: "Mesada Guillermina",  monto: 7500,  tipo: "fijo" },
+  { id: "scotia",       fecha: "~7/06",        concepto: "Scotiabank",          monto: 9906,  tipo: "tarjeta", urgente: true, usd: 0.33 },
+  { id: "alquiler",     fecha: "10/06",       concepto: "Alquiler",            monto: 32000, tipo: "fijo",    urgente: true },
+  { id: "bbva",         fecha: "~15/06",       concepto: "BBVA",                monto: 4153,  tipo: "tarjeta" },
+  { id: "tributos",     fecha: "14/06",       concepto: "Tributos",            monto: 650,   tipo: "fijo" },
+  { id: "santander",    fecha: "20/06",       concepto: "Santander",           monto: 7312,  tipo: "tarjeta", usd: 54.42 },
+  { id: "gascom",       fecha: "20/06",       concepto: "Gastos comunes",      monto: 4500,  tipo: "fijo" },
+  { id: "telfijo",      fecha: "20/06",       concepto: "Teléfono fijo",       monto: 1700,  tipo: "fijo",    variable: true },
+  { id: "celguille",    fecha: "20/06",       concepto: "Cel Guillermina",     monto: 620,   tipo: "fijo" },
+  { id: "calistenia",   fecha: "~20/06",       concepto: "Calistenia",          monto: 1990,  tipo: "fijo" },
+  { id: "ute",          fecha: "29/06",       concepto: "UTE (luz)",           monto: 4500,  tipo: "fijo",    variable: true },
+  { id: "debsantander", fecha: "30/06",       concepto: "Débito Santander",    monto: 875,   tipo: "fijo" },
   { id: "comida",       fecha: "Todo el mes", concepto: "Comida + Transporte", monto: 28000, tipo: "variable", expandible: true },
 ];
 
@@ -276,14 +276,14 @@ export default function Dashboard() {
         } else {
           // No storage at all - use true defaults only once
           setPlan(PLAN_DEFAULT);
-          setPagados(["mesada"]);
+          setPagados([]);
           setSubGastos({});
           setIngresos([]);
         }
       } catch(e) {
         // On error, use defaults
         setPlan(PLAN_DEFAULT);
-        setPagados(["mesada"]);
+        setPagados([]);
         setSubGastos({});
         setIngresos([]);
       }
