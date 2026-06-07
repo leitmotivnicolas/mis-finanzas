@@ -149,10 +149,10 @@ const SUSCRIPCIONES = [
 const TC = 41;
 
 const TARJETAS_DATA = [
-  { nombre: "BBVA",       color: "#004B9E", bg: "#e8f0fb", abril: 0,  usd: 0,  vto: "~15/05", nota: "Pendiente — subir estado" },
-  { nombre: "Scotiabank", color: "#EC111A", bg: "#fef2f2", abril: 4893, usd: 22.35, vto: "07/05", nota: "Vence 07/05" },
-  { nombre: "Itaú",       color: "#FF6200", bg: "#fff4ee", abril: 25145, usd: 52.02, vto: "04/05", nota: "Vence 04/05" },
-  { nombre: "Santander",  color: "#CC0000", bg: "#fdf2f2", abril: 40698, usd: 170.0, vto: "20/05", nota: "Vence 20/05" },
+  { nombre: "BBVA",       color: "#004B9E", bg: "#e8f0fb", abril: 0,  usd: 0,  vto: "~15/06", nota: "Pendiente — subir estado" },
+  { nombre: "Scotiabank", color: "#EC111A", bg: "#fef2f2", abril: 0,  usd: 0,  vto: "~07/06", nota: "Pendiente — subir estado" },
+  { nombre: "Itaú",       color: "#FF6200", bg: "#fff4ee", abril: 0,  usd: 0,  vto: "~04/06", nota: "Pendiente — subir estado" },
+  { nombre: "Santander",  color: "#CC0000", bg: "#fdf2f2", abril: 0,  usd: 0,  vto: "~20/06", nota: "Pendiente — subir estado" },
 ];
 
 
@@ -254,8 +254,8 @@ export default function Dashboard() {
     (async () => {
       try {
         let data = null;
-        try { const r = await window.storage.get("finanzas_mayo26"); if (r?.value) data = JSON.parse(r.value); } catch(e) {}
-        if (!data) { try { const l = localStorage.getItem("finanzas_mayo26"); if (l) data = JSON.parse(l); } catch(e) {} }
+        try { const r = await window.storage.get("finanzas_junio26"); if (r?.value) data = JSON.parse(r.value); } catch(e) {}
+        if (!data) { try { const l = localStorage.getItem("finanzas_junio26"); if (l) data = JSON.parse(l); } catch(e) {} }
         if (data) {
           // Storage-first: user data always wins over defaults
           if (data.plan) {
@@ -297,8 +297,8 @@ export default function Dashboard() {
     setUnsaved(true);
     const timer = setTimeout(async () => {
       const data = JSON.stringify({ plan: safePlan, pagados: safePagados, subGastos: safeSubGastos, ingresos: safeIngresos });
-      try { await window.storage.set("finanzas_mayo26", data); } catch(e) {}
-      try { localStorage.setItem("finanzas_mayo26", data); } catch(e) {}
+      try { await window.storage.set("finanzas_junio26", data); } catch(e) {}
+      try { localStorage.setItem("finanzas_junio26", data); } catch(e) {}
       setUnsaved(false);
     }, 800);
     return () => clearTimeout(timer);
@@ -308,8 +308,8 @@ export default function Dashboard() {
     const data = JSON.stringify({ plan: safePlan, pagados: safePagados, subGastos: safeSubGastos, ingresos: safeIngresos });
     setSavedMsg("saving");
     try {
-      try { await window.storage.set("finanzas_mayo26", data); } catch(e) {}
-      try { localStorage.setItem("finanzas_mayo26", data); } catch(e) {}
+      try { await window.storage.set("finanzas_junio26", data); } catch(e) {}
+      try { localStorage.setItem("finanzas_junio26", data); } catch(e) {}
       setSavedMsg("ok"); setUnsaved(false);
       setTimeout(() => setSavedMsg(false), 2000);
     } catch(e) { setSavedMsg("error"); setTimeout(() => setSavedMsg(false), 3000); }
@@ -453,7 +453,7 @@ export default function Dashboard() {
       <div style={{ background: `linear-gradient(135deg, ${C.primary} 0%, #7c3aed 100%)`, padding: "32px 20px 24px", borderRadius: "0 0 28px 28px" }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 24 }}>
           <div>
-            <div style={{ fontSize: 11, color: "rgba(255,255,255,0.65)", letterSpacing: 2, textTransform: "uppercase", marginBottom: 4 }}>Mayo 2026</div>
+            <div style={{ fontSize: 11, color: "rgba(255,255,255,0.65)", letterSpacing: 2, textTransform: "uppercase", marginBottom: 4 }}>Junio 2026</div>
             <div style={{ fontSize: 26, fontWeight: 700, color: "#fff" }}>Mis Finanzas</div>
           </div>
           <div style={{ background: "rgba(255,255,255,0.15)", borderRadius: 12, padding: "6px 12px", fontSize: 11, color: "rgba(255,255,255,0.85)", fontWeight: 500 }}>
