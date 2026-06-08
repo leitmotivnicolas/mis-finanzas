@@ -148,10 +148,10 @@ const SUSCRIPCIONES = [
 const TC = 41;
 
 const TARJETAS_DATA = [
-  { nombre: "BBVA",       color: "#004B9E", bg: "#e8f0fb", abril: 0,  usd: 0,  vto: "~15/06", nota: "Pendiente — subir estado" },
-  { nombre: "Scotiabank", color: "#EC111A", bg: "#fef2f2", abril: 0,  usd: 0,  vto: "~07/06", nota: "Pendiente — subir estado" },
-  { nombre: "Itaú",       color: "#FF6200", bg: "#fff4ee", abril: 0,  usd: 0,  vto: "~04/06", nota: "Pendiente — subir estado" },
-  { nombre: "Santander",  color: "#CC0000", bg: "#fdf2f2", abril: 0,  usd: 0,  vto: "~20/06", nota: "Pendiente — subir estado" },
+  { nombre: "BBVA",       color: "#004B9E", bg: "#e8f0fb", abril: 0,  usd: 0,  vto: "~15/06", nota: "Pendiente — subir estado", planId: "bbva" },
+  { nombre: "Scotiabank", color: "#EC111A", bg: "#fef2f2", abril: 0,  usd: 0,  vto: "~07/06", nota: "Pendiente — subir estado", planId: "scotia" },
+  { nombre: "Itaú",       color: "#FF6200", bg: "#fff4ee", abril: 0,  usd: 0,  vto: "~04/06", nota: "Pendiente — subir estado", planId: "itau" },
+  { nombre: "Santander",  color: "#CC0000", bg: "#fdf2f2", abril: 0,  usd: 0,  vto: "~20/06", nota: "Pendiente — subir estado", planId: "santander" },
 ];
 
 
@@ -272,6 +272,7 @@ export default function Dashboard() {
           setPagados(data.pagados   ?? []);
           setSubGastos(data.subGastos ?? {});
           setIngresos(data.ingresos  ?? []);
+          if (data.tarjetasMontos) setTarjetasMontos(data.tarjetasMontos);
         } else {
           // No storage at all - use true defaults only once
           setPlan(PLAN_DEFAULT);
@@ -295,7 +296,7 @@ export default function Dashboard() {
     if (!ready) return;
     setUnsaved(true);
     const timer = setTimeout(async () => {
-      const data = JSON.stringify({ plan: safePlan, pagados: safePagados, subGastos: safeSubGastos, ingresos: safeIngresos });
+      const data = JSON.stringify({ plan: safePlan, pagados: safePagados, subGastos: safeSubGastos, ingresos: safeIngresos, tarjetasMontos });
       try { await window.storage.set("finanzas_junio26", data); } catch(e) {}
       try { localStorage.setItem("finanzas_junio26", data); } catch(e) {}
       setUnsaved(false);
@@ -304,7 +305,7 @@ export default function Dashboard() {
   }, [plan, pagados, subGastos, ingresos]);
 
   const guardarTodo = async () => {
-    const data = JSON.stringify({ plan: safePlan, pagados: safePagados, subGastos: safeSubGastos, ingresos: safeIngresos });
+    const data = JSON.stringify({ plan: safePlan, pagados: safePagados, subGastos: safeSubGastos, ingresos: safeIngresos, tarjetasMontos });
     setSavedMsg("saving");
     try {
       try { await window.storage.set("finanzas_junio26", data); } catch(e) {}
@@ -385,8 +386,19 @@ export default function Dashboard() {
   const borrarItem = (id) => { setPlan(prev => (prev || PLAN_DEFAULT).filter(i => i.id !== id)); setPagados(prev => prev.filter(p => p !== id)); };
 
   const getMontoEfectivo = (item) => {
+    if (item.editable) return tarjetasMontos[item.id]?.pesos || 0;
     if (!item.expandible) return item.monto;
     return Math.max(0, item.monto - ((safeSubGastos)[item.id] || []).reduce((a, b) => a + b.monto, 0));
+  };
+
+  const guardarMonto = (id) => {
+    const p = parseFloat(inputTarjeta.pesos.replace(/\./g, "").replace(",", ".")) || 0;
+    const u = parseFloat(inputTarjeta.usd.replace(",", ".")) || 0;
+    setTarjetasMontos(prev => ({ ...prev, [id]: { pesos: p, usd: u } }));
+    // Also sync to plan
+    setPlan(prev => (prev || PLAN_DEFAULT).map(i => i.id === id ? { ...i, monto: p, usd: u } : i));
+    setEditandoTarjeta(null);
+    setInputTarjeta({ pesos: "", usd: "" });
   };
 
   const safePlan      = plan      || PLAN_DEFAULT;
@@ -573,6 +585,7 @@ export default function Dashboard() {
                 <div key={item.id} style={{ marginBottom: 8 }}>
                   <div
                     onClick={() => { if (item.expandible) setExpandido(isOpen ? null : item.id); else togglePago(item.id); }}
+                  onDoubleClick={() => { if (item.editable && !esPagado) { setEditandoTarjeta(editandoTarjeta === item.id ? null : item.id); setInputTarjeta({ pesos: String(tarjetasMontos[item.id]?.pesos || ""), usd: String(tarjetasMontos[item.id]?.usd || "") }); } }}
                   onDoubleClick={() => { if (item.variable && !esPagado) setEditandoItem(editandoItem === item.id ? null : item.id); }}
                     style={{
                       background: esPagado ? '#f0fdf4' : C.surface, borderRadius: isOpen || showUte ? "14px 14px 0 0" : 14,
@@ -607,6 +620,7 @@ export default function Dashboard() {
                       <div style={{ display: "flex", alignItems: "center", gap: 6, marginTop: 3 }}>
                         <span style={{ fontSize: 12, fontWeight: 600, color: C.text2 }}>{item.fecha}</span>
                         {item.variable && !esPagado && <span style={{ fontSize: 9, color: C.text3 }}>doble toque para editar</span>}
+                        {item.editable && !esPagado && tarjetasMontos[item.id]?.pesos === undefined && <span style={{ fontSize: 9, color: C.warning, background: C.warningBg, borderRadius: 99, padding: '1px 6px', fontWeight: 600 }}>doble toque para cargar</span>}
                         {item.urgente && !esPagado && <Badge label="urgente" color={C.danger} bg={C.dangerBg} />}
                         {item.expandible && gastado > 0 && <Badge label={`${fmt(gastado)} gastado`} color={C.primary} bg={C.primaryBg} />}
                         
@@ -631,6 +645,23 @@ export default function Dashboard() {
                     )}
                     {item.expandible && <div style={{ fontSize: 11, color: C.text3 }}>{isOpen ? "▲" : "▼"}</div>}
                   </div>
+
+                  {/* Editable tarjeta panel */}
+                  {item.editable && editandoTarjeta === item.id && (
+                    <div style={{ background: C.primaryBg, border: `1.5px solid ${TARJETA_COLORS[item.id] || C.primary}`, borderTop: "none", borderRadius: "0 0 14px 14px", padding: 12 }}>
+                      <div style={{ fontSize: 10, color: C.primary, fontWeight: 600, textTransform: "uppercase", letterSpacing: 1, marginBottom: 8 }}>Ingresá el monto del estado</div>
+                      <div style={{ display: "flex", gap: 8, marginBottom: 8 }}>
+                        <input type="number" value={inputTarjeta.pesos} onChange={e => setInputTarjeta(p => ({ ...p, pesos: e.target.value }))}
+                          placeholder="Monto $" autoFocus style={{ ...iStyle({ flex: 1, border: `1.5px solid ${C.primary}` }), width: "auto" }} />
+                        <input type="number" value={inputTarjeta.usd} onChange={e => setInputTarjeta(p => ({ ...p, usd: e.target.value }))}
+                          placeholder="U$S" style={{ ...iStyle({ width: 80 }), width: 80 }} />
+                      </div>
+                      <div style={{ display: "flex", gap: 8 }}>
+                        <button onClick={() => { setEditandoTarjeta(null); setInputTarjeta({ pesos: "", usd: "" }); }} style={{ flex: 1, padding: "9px", borderRadius: 10, border: `1.5px solid ${C.border}`, background: C.surface2, color: C.text2, cursor: "pointer", fontFamily: "Inter, sans-serif", fontSize: 12 }}>Cancelar</button>
+                        <button onClick={() => guardarMonto(item.id)} style={{ flex: 2, padding: "9px", borderRadius: 10, border: "none", background: C.primary, color: "#fff", cursor: "pointer", fontFamily: "Inter, sans-serif", fontSize: 12, fontWeight: 600 }}>Guardar</button>
+                      </div>
+                    </div>
+                  )}
 
                   {/* UTE panel */}
                   {showUte && (
