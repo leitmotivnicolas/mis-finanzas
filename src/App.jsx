@@ -31,7 +31,7 @@ const PLAN_BASE = [
   { id:"gascom",      fecha:"20/06",  concepto:"Gastos comunes",      monto:4500,  tipo:"fijo" },
   { id:"telfijo",     fecha:"20/06",  concepto:"Teléfono fijo",       monto:1700,  tipo:"fijo",    variable:true },
   { id:"celguille",   fecha:"20/06",  concepto:"Cel Guillermina",     monto:620,   tipo:"fijo" },
-  { id:"cosem",       fecha:"~20/06", concepto:"COSEM",               monto:4500,  tipo:"fijo" },
+  { id:"cosem",       fecha:"~20/06", concepto:"Médica Uruguaya",      monto:3800,  tipo:"fijo" },
   { id:"lentes",      fecha:"~20/06", concepto:"Lentes (2/10)",       monto:2080,  tipo:"fijo" },
   { id:"ute",         fecha:"29/06",  concepto:"UTE (luz)",           monto:4500,  tipo:"fijo",    variable:true },
   { id:"debsantander",fecha:"30/06",  concepto:"Débito Santander",    monto:875,   tipo:"fijo" },
@@ -55,7 +55,7 @@ const FIJOS = [
   { concepto:"Cel Guillermina",    monto:620,   vto:20, icono:"📱" },
   { concepto:"Tributos",           monto:650,   vto:14, icono:"🏛️" },
   { concepto:"Débito Santander",   monto:875,   vto:30, icono:"💳" },
-  { concepto:"COSEM",              monto:4500,  vto:20, icono:"🏥" },
+  { concepto:"Médica Uruguaya",    monto:3800,  vto:20, icono:"🏥" },
   { concepto:"Lentes",             monto:2080,  vto:20, icono:"👓" },
 ];
 
@@ -142,11 +142,11 @@ export default function App() {
 
   const facturado  = ingresos.reduce((a,b)=>a+b.m,0);
   const subTotal   = Object.values(subs).flat().reduce((a,b)=>a+b.m,0);
-  const pagadoSum  = plan.filter(i=>pagados.includes(i.id)&&i.id!=="mesada").reduce((a,b)=>a+gM(b),0);
+  const pagadoSum  = plan.filter(i=>pagados.includes(i.id)&&i.id!=="mesada").reduce((a,b)=>a+gM(b)+(b.editable?(tMontos[b.id]?.u||0)*TC:0),0);
   const disponible = facturado - pagadoSum - subTotal;
-  const porPagar   = plan.filter(i=>!pagados.includes(i.id)).reduce((a,b)=>a+gM(b),0);
-  const totalPago  = plan.filter(i=>pagados.includes(i.id)).reduce((a,b)=>a+gM(b),0);
-  const totalMes   = plan.reduce((a,b)=>a+gM(b),0);
+  const porPagar   = plan.filter(i=>!pagados.includes(i.id)).reduce((a,b)=>a+gM(b)+(b.editable&&!pagados.includes(b.id)?(tMontos[b.id]?.u||0)*TC:0),0);
+  const totalPago  = plan.filter(i=>pagados.includes(i.id)).reduce((a,b)=>a+gM(b)+(b.editable?(tMontos[b.id]?.u||0)*TC:0),0);
+  const totalMes   = plan.reduce((a,b)=>a+gM(b)+(b.editable?(tMontos[b.id]?.u||0)*TC:0),0);
   const pct        = totalMes>0 ? Math.min(100,Math.round(((totalPago+subTotal)/totalMes)*100)) : 0;
   const necesita   = Math.max(0, porPagar - disponible);
 
