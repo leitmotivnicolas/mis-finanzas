@@ -32,7 +32,7 @@ const C = {
 // ── DATA ─────────────────────────────────────────────────────────────────────
 const PLAN_DEFAULT = [
   { id: "mesada",       fecha: "1/06",        concepto: "Mesada Guillermina",  monto: 7500,  tipo: "variable", expandible: true },
-  { id: "scotia",       fecha: "~7/06",        concepto: "Scotiabank",          monto: 9906,  tipo: "tarjeta", urgente: true, usd: 0.33 },
+  { id: "scotia",       fecha: "~7/06",        concepto: "Scotiabank",          monto: 0,     tipo: "tarjeta", usd: 0, editable: true },
   { id: "alquiler",     fecha: "10/06",       concepto: "Alquiler",            monto: 32000, tipo: "fijo",    urgente: true },
   { id: "bbva",         fecha: "~15/06",       concepto: "BBVA",                monto: 4153,  tipo: "tarjeta" },
   { id: "tributos",     fecha: "14/06",       concepto: "Tributos",            monto: 650,   tipo: "fijo" },
@@ -48,8 +48,8 @@ const PLAN_DEFAULT = [
 const CUOTAS = [
   { mes: "Junio", nicolas: 23616, usdNic: 54.75, angelina: 45211, nota: "3 tarjetas · solo cuotas comprometidas",
     detalle: [
-      { tarjeta: "BBVA",       color: "#004B9E", monto: 4153,  usd: 0,     vto: "13/04" },
-      { tarjeta: "Scotiabank", color: "#EC111A", monto: 9906,  usd: 0.33,  vto: "06/04" },
+      { tarjeta: "BBVA",       color: "#004B9E", monto: 0,  usd: 0,     vto: "13/04" },
+      { tarjeta: "Scotiabank", color: "#EC111A", monto: 0,  usd: 0.33,  vto: "06/04" },
       { tarjeta: "Santander",  color: "#CC0000", monto: 7312,  usd: 54.42, vto: "20/04" },
     ]
   },
@@ -57,55 +57,55 @@ const CUOTAS = [
     detalle: [
       { tarjeta: "Itaú",       color: "#FF6200", monto: 25145, usd: 52.02, vto: "04/05" },
       { tarjeta: "Santander",  color: "#CC0000", monto: 4309,  usd: 81.90, vto: "~20/05" },
-      { tarjeta: "BBVA",       color: "#004B9E", monto: 3315,  usd: 0,     vto: "~15/05" },
-      { tarjeta: "Scotiabank", color: "#EC111A", monto: 3461,  usd: 0,     vto: "~07/05" },
+      { tarjeta: "BBVA",       color: "#004B9E", monto: 0,  usd: 0,     vto: "~15/05" },
+      { tarjeta: "Scotiabank", color: "#EC111A", monto: 0,  usd: 0,     vto: "~07/05" },
     ]
   },
   { mes: "Junio", nicolas: 25744, usdNic: 81.90, angelina: 16077, nota: "4 tarjetas · solo cuotas comprometidas",
     detalle: [
       { tarjeta: "Itaú",       color: "#FF6200", monto: 16587, usd: 0,     vto: "~04/06" },
       { tarjeta: "Santander",  color: "#CC0000", monto: 4309,  usd: 81.90, vto: "~20/06" },
-      { tarjeta: "BBVA",       color: "#004B9E", monto: 1387,  usd: 0,     vto: "~15/06" },
-      { tarjeta: "Scotiabank", color: "#EC111A", monto: 3461,  usd: 0,     vto: "~07/06" },
+      { tarjeta: "BBVA",       color: "#004B9E", monto: 0,  usd: 0,     vto: "~15/06" },
+      { tarjeta: "Scotiabank", color: "#EC111A", monto: 0,  usd: 0,     vto: "~07/06" },
     ]
   },
   { mes: "Julio", nicolas: 22789, usdNic: 81.90, angelina: 10750, nota: "4 tarjetas · solo cuotas comprometidas",
     detalle: [
       { tarjeta: "Itaú",       color: "#FF6200", monto: 13632, usd: 0,     vto: "~04/07" },
       { tarjeta: "Santander",  color: "#CC0000", monto: 4309,  usd: 81.90, vto: "~20/07" },
-      { tarjeta: "BBVA",       color: "#004B9E", monto: 1387,  usd: 0,     vto: "~15/07" },
-      { tarjeta: "Scotiabank", color: "#EC111A", monto: 3461,  usd: 0,     vto: "~07/07" },
+      { tarjeta: "BBVA",       color: "#004B9E", monto: 0,  usd: 0,     vto: "~15/07" },
+      { tarjeta: "Scotiabank", color: "#EC111A", monto: 0,  usd: 0,     vto: "~07/07" },
     ]
   },
   { mes: "Agosto", nicolas: 22789, usdNic: 81.90, angelina: 7575, nota: "4 tarjetas · solo cuotas comprometidas",
     detalle: [
       { tarjeta: "Itaú",       color: "#FF6200", monto: 13632, usd: 0,     vto: "~04/08" },
       { tarjeta: "Santander",  color: "#CC0000", monto: 4309,  usd: 81.90, vto: "~20/08" },
-      { tarjeta: "BBVA",       color: "#004B9E", monto: 1387,  usd: 0,     vto: "~15/08" },
-      { tarjeta: "Scotiabank", color: "#EC111A", monto: 3461,  usd: 0,     vto: "~07/08" },
+      { tarjeta: "BBVA",       color: "#004B9E", monto: 0,  usd: 0,     vto: "~15/08" },
+      { tarjeta: "Scotiabank", color: "#EC111A", monto: 0,  usd: 0,     vto: "~07/08" },
     ]
   },
   { mes: "Septiembre", nicolas: 18715, usdNic: 81.90, angelina: 0, nota: "4 tarjetas · solo cuotas comprometidas",
     detalle: [
       { tarjeta: "Itaú",       color: "#FF6200", monto: 11632, usd: 0,     vto: "~04/09" },
       { tarjeta: "Santander",  color: "#CC0000", monto: 3927,  usd: 81.90, vto: "~20/09" },
-      { tarjeta: "BBVA",       color: "#004B9E", monto: 795,   usd: 0,     vto: "~15/09" },
-      { tarjeta: "Scotiabank", color: "#EC111A", monto: 2361,  usd: 0,     vto: "~07/09" },
+      { tarjeta: "BBVA",       color: "#004B9E", monto: 0,   usd: 0,     vto: "~15/09" },
+      { tarjeta: "Scotiabank", color: "#EC111A", monto: 0,  usd: 0,     vto: "~07/09" },
     ]
   },
   { mes: "Octubre", nicolas: 13550, usdNic: 81.90, angelina: 0, nota: "4 tarjetas · solo cuotas comprometidas",
     detalle: [
       { tarjeta: "Itaú",       color: "#FF6200", monto: 9299,  usd: 0,     vto: "~04/10" },
       { tarjeta: "Santander",  color: "#CC0000", monto: 3927,  usd: 81.90, vto: "~20/10" },
-      { tarjeta: "BBVA",       color: "#004B9E", monto: 795,   usd: 0,     vto: "~15/10" },
-      { tarjeta: "Scotiabank", color: "#EC111A", monto: 656,   usd: 0,     vto: "~07/10" },
+      { tarjeta: "BBVA",       color: "#004B9E", monto: 0,   usd: 0,     vto: "~15/10" },
+      { tarjeta: "Scotiabank", color: "#EC111A", monto: 0,   usd: 0,     vto: "~07/10" },
     ]
   },
   { mes: "Noviembre", nicolas: 10021, usdNic: 81.90, angelina: 0, nota: "3 tarjetas · solo cuotas comprometidas",
     detalle: [
       { tarjeta: "Itaú",       color: "#FF6200", monto: 5299,  usd: 0,     vto: "~04/11" },
       { tarjeta: "Santander",  color: "#CC0000", monto: 3927,  usd: 81.90, vto: "~20/11" },
-      { tarjeta: "BBVA",       color: "#004B9E", monto: 795,   usd: 0,     vto: "~15/11" },
+      { tarjeta: "BBVA",       color: "#004B9E", monto: 0,   usd: 0,     vto: "~15/11" },
     ]
   },
   { mes: "Diciembre", nicolas: 3094, usdNic: 53.21, angelina: 0, nota: "2 tarjetas · solo cuotas comprometidas",
@@ -137,13 +137,13 @@ const GASTOS_FIJOS = [
 const SUSCRIPCIONES = [
   { concepto: "YouTube Premium",       tarjeta: "Santander", color: "#CC0000", monto: 410,  usd: 9.99, icono: "🎬", nota: "U$S 9.99 × $41" },
   { concepto: "Antel Móvil",           tarjeta: "Santander", color: "#CC0000", monto: 635,  usd: 0,    icono: "📱", nota: "Celular Nicolás" },
+  { concepto: "Calistenia (Evolucion)", tarjeta: "Santander", color: "#CC0000", monto: 1900, usd: 0, icono: "🏋️", nota: "Merpago Evolucion — Santander" },
   { concepto: "Google One",            tarjeta: "Santander", color: "#CC0000", monto: 126,  usd: 3.08, icono: "☁️", nota: "Google Drive storage" },
   { concepto: "Claude (Anthropic)", tarjeta: "Itaú",      color: "#FF6200", monto: 205,  usd: 5.00, icono: "🤖", nota: "Suscripción Claude AI" },
   { concepto: "Apple U$S 2.99",          tarjeta: "Itaú",      color: "#FF6200", monto: 123,  usd: 2.99, icono: "🍎", nota: "a revisar qué es" },
   { concepto: "Apple U$S 4.99",          tarjeta: "Itaú",      color: "#FF6200", monto: 205,  usd: 4.99, icono: "🍎", nota: "a revisar qué es" },
   { concepto: "Claude (Anthropic)",       tarjeta: "Itaú",      color: "#FF6200", monto: 205,  usd: 5.00,  icono: "🤖", nota: "Suscripción Claude AI" },
   { concepto: "Seguro SURA",           tarjeta: "Santander", color: "#CC0000", monto: 2435, usd: 0,    icono: "🔒", nota: "Seguro alquiler" },
-  { concepto: "Calistenia (Evolucion)", tarjeta: "Santander", color: "#CC0000", monto: 1900, usd: 0,   icono: "🏋️", nota: "Merpago Evolucion — Santander" },
 ];
 const TC = 41;
 
