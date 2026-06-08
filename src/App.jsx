@@ -250,7 +250,6 @@ export default function Dashboard() {
   const [editandoTarjeta, setEditandoTarjeta] = useState(null);
   const [inputTarjeta, setInputTarjeta]       = useState({ pesos: "", usd: "" });
   const [expandedMes, setExpandedMes]         = useState(null);
-  const [expandedMes, setExpandedMes] = useState(null);
   const [editMonto, setEditMonto] = useState("");
 
   useEffect(() => {
