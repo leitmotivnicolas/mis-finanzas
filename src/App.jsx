@@ -31,7 +31,7 @@ const C = {
 
 // ── DATA ─────────────────────────────────────────────────────────────────────
 const PLAN_DEFAULT = [
-  { id: "mesada",       fecha: "1/06",        concepto: "Mesada Guillermina",  monto: 7500,  tipo: "fijo" },
+  { id: "mesada",       fecha: "1/06",        concepto: "Mesada Guillermina",  monto: 7500,  tipo: "variable", expandible: true },
   { id: "scotia",       fecha: "~7/06",        concepto: "Scotiabank",          monto: 9906,  tipo: "tarjeta", urgente: true, usd: 0.33 },
   { id: "alquiler",     fecha: "10/06",       concepto: "Alquiler",            monto: 32000, tipo: "fijo",    urgente: true },
   { id: "bbva",         fecha: "~15/06",       concepto: "BBVA",                monto: 4153,  tipo: "tarjeta" },
@@ -47,7 +47,7 @@ const PLAN_DEFAULT = [
 ];
 
 const CUOTAS = [
-  { mes: "Abril", nicolas: 23616, usdNic: 54.75, angelina: 45211, nota: "3 tarjetas · solo cuotas comprometidas",
+  { mes: "Junio", nicolas: 23616, usdNic: 54.75, angelina: 45211, nota: "3 tarjetas · solo cuotas comprometidas",
     detalle: [
       { tarjeta: "BBVA",       color: "#004B9E", monto: 4153,  usd: 0,     vto: "13/04" },
       { tarjeta: "Scotiabank", color: "#EC111A", monto: 9906,  usd: 0.33,  vto: "06/04" },
@@ -142,7 +142,7 @@ const SUSCRIPCIONES = [
   { concepto: "Claude (Anthropic)", tarjeta: "Itaú",      color: "#FF6200", monto: 205,  usd: 5.00, icono: "🤖", nota: "Suscripción Claude AI" },
   { concepto: "Apple U$S 2.99",          tarjeta: "Itaú",      color: "#FF6200", monto: 123,  usd: 2.99, icono: "🍎", nota: "a revisar qué es" },
   { concepto: "Apple U$S 4.99",          tarjeta: "Itaú",      color: "#FF6200", monto: 205,  usd: 4.99, icono: "🍎", nota: "a revisar qué es" },
-  { concepto: "Apple U$S 20.00",         tarjeta: "Itaú",      color: "#FF6200", monto: 820,  usd: 20.00, icono: "🍎", nota: "iCloud+ o Apple One — a revisar" },
+  { concepto: "Claude (Anthropic)",       tarjeta: "Itaú",      color: "#FF6200", monto: 205,  usd: 5.00,  icono: "🤖", nota: "Suscripción Claude AI" },
   { concepto: "Seguro SURA",           tarjeta: "Santander", color: "#CC0000", monto: 2435, usd: 0,    icono: "🔒", nota: "Seguro alquiler" },
   { concepto: "Calistenia (Evolucion)", tarjeta: "Santander", color: "#CC0000", monto: 1900, usd: 0,   icono: "🏋️", nota: "Merpago Evolucion — Santander" },
 ];
@@ -379,7 +379,7 @@ export default function Dashboard() {
     const val = parseFloat(nuevoItem.monto.replace(/\./g, "").replace(",", "."));
     if (!nuevoItem.concepto || isNaN(val) || val <= 0) return;
     const id = "extra_" + Date.now();
-    setPlan(prev => [...(prev || PLAN_DEFAULT), { id, fecha: nuevoItem.fecha || "Abril", concepto: nuevoItem.concepto, monto: val, tipo: "extra" }]);
+    setPlan(prev => [...(prev || PLAN_DEFAULT), { id, fecha: nuevoItem.fecha || "Junio", concepto: nuevoItem.concepto, monto: val, tipo: "extra" }]);
     setNuevoItem({ concepto: "", monto: "", fecha: "" }); setShowNuevoItem(false);
   };
 
@@ -433,9 +433,8 @@ export default function Dashboard() {
   );
 
   const TABS = [
-    { id: "abril",    label: "Abril" },
-    { id: "cuotas",   label: "Cuotas" },
-    { id: "tarjetas", label: "Tarjetas" },
+    { id: "abril",    label: "Junio" },
+      { id: "tarjetas", label: "Tarjetas" },
     { id: "fijos",    label: "Fijos" },
   ];
 
@@ -704,77 +703,6 @@ export default function Dashboard() {
             <div style={{ background: C.warningBg, borderRadius: 12, padding: "11px 14px", marginTop: 12, border: `1.5px solid #fde68a`, display: "flex", alignItems: "center", gap: 8 }}>
               <span style={{ fontSize: 16 }}>⚠️</span>
               <span style={{ fontSize: 11, color: C.warning, fontWeight: 500 }}>No trabajás 1–6 ni 12–19. Máximo finde: <strong>${fmt(2300)}</strong></span>
-            </div>
-          </div>
-        )}
-
-        {/* ── TAB CUOTAS ── */}
-        {tab === "cuotas" && (
-          <div style={{ animation: "fadeUp 0.3s ease" }}>
-            <div style={{ fontSize: 10, color: C.text3, fontWeight: 600, letterSpacing: 1, textTransform: "uppercase", marginBottom: 10 }}>Cuotas comprometidas — Nicolás</div>
-            {CUOTAS.map(c => {
-              const totalConUSD = c.nicolas + Math.round((c.usdNic || 0) * TC);
-              const maxTotal = Math.max(...CUOTAS.map(x => x.nicolas + Math.round((x.usdNic || 0) * TC)));
-              const color = totalConUSD > 20000 ? C.danger : totalConUSD > 10000 ? C.warning : totalConUSD > 0 ? C.success : C.text3;
-              const isOpen = expandedMes === c.mes;
-              const hasDetail = c.detalle && c.detalle.length > 0;
-              return (
-                <div key={c.mes} style={{ marginBottom: 8 }}>
-                  <div
-                    onClick={() => hasDetail && setExpandedMes(isOpen ? null : c.mes)}
-                    style={{
-                      background: C.surface,
-                      borderRadius: isOpen ? "14px 14px 0 0" : 14,
-                      padding: "14px",
-                      boxShadow: C.shadow,
-                      border: `1.5px solid ${totalConUSD === 0 ? C.border : color + "44"}`,
-                      borderBottom: isOpen ? "none" : undefined,
-                      cursor: hasDetail ? "pointer" : "default",
-                      transition: "all 0.2s"
-                    }}
-                  >
-                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: totalConUSD > 0 ? 10 : 0 }}>
-                      <div>
-                        <div style={{ fontSize: 14, fontWeight: 700, color: C.text }}>{c.mes}</div>
-                        {c.nota && <div style={{ fontSize: 10, color: C.text3, marginTop: 2 }}>{c.nota} {hasDetail ? (isOpen ? "▲" : "▼") : ""}</div>}
-                      </div>
-                      <div style={{ textAlign: "right" }}>
-                        <div style={{ fontSize: 16, fontWeight: 700, color: totalConUSD === 0 ? C.text3 : color }}>
-                          {totalConUSD === 0 ? "—" : "$" + fmt(totalConUSD)}
-                        </div>
-                        {c.usdNic > 0 && <div style={{ fontSize: 10, color: C.purple }}>incl. U$S {c.usdNic} (~${fmt(Math.round(c.usdNic * TC))})</div>}
-                      </div>
-                    </div>
-                    {totalConUSD > 0 && (
-                      <div style={{ height: 5, background: C.border, borderRadius: 99 }}>
-                        <div style={{ height: "100%", width: `${(totalConUSD / maxTotal) * 100}%`, background: color, borderRadius: 99, transition: "width 0.8s ease" }}/>
-                      </div>
-                    )}
-                    {c.angelina > 0 && <div style={{ fontSize: 10, color: C.text3, marginTop: 8 }}>Angelina aparte: ${fmt(c.angelina)}</div>}
-                  </div>
-
-                  {isOpen && hasDetail && (
-                    <div style={{ background: C.surface2, border: `1.5px solid ${color}33`, borderTop: "none", borderRadius: "0 0 14px 14px", padding: "10px 14px" }}>
-                      {c.detalle.map((d, i) => (
-                        <div key={d.tarjeta} style={{ display: "flex", alignItems: "center", gap: 12, padding: "10px 0", borderBottom: i < c.detalle.length - 1 ? `1px solid ${C.border}` : "none" }}>
-                          <div style={{ width: 10, height: 10, borderRadius: "50%", background: d.color, flexShrink: 0, boxShadow: `0 0 6px ${d.color}88` }}/>
-                          <div style={{ flex: 1 }}>
-                            <div style={{ fontSize: 13, fontWeight: 600, color: C.text }}>{d.tarjeta}</div>
-                            <div style={{ fontSize: 10, color: C.text3, marginTop: 1 }}>Vto: {d.vto}</div>
-                          </div>
-                          <div style={{ textAlign: "right" }}>
-                            <div style={{ fontSize: 14, fontWeight: 700, color: d.color }}>${fmt(d.monto)}</div>
-                            {d.usd > 0 && <div style={{ fontSize: 9, color: C.purple }}>+ U$S {d.usd.toFixed(2)}</div>}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              );
-            })}
-            <div style={{ background: C.successBg, borderRadius: 12, padding: "12px 14px", border: `1.5px solid #a7f3d0` }}>
-              <span style={{ fontSize: 11, color: C.success, fontWeight: 500 }}>✓ Desde febrero 2027 desaparecen casi todas las cuotas</span>
             </div>
           </div>
         )}
