@@ -228,7 +228,7 @@ function Badge({ label, color, bg }) {
 // ── MAIN ─────────────────────────────────────────────────────────────────────
 export default function Dashboard() {
   const [ready, setReady]           = useState(false);
-  const [tab, setTab]               = useState("abril");
+  const [tab, setTab]               = useState("junio");
   const [plan, setPlan]             = useState(null);
   const [pagados, setPagados]       = useState(null);
   const [expandido, setExpandido]   = useState(null);
@@ -246,6 +246,10 @@ export default function Dashboard() {
   const [nuevoItem, setNuevoItem] = useState({ concepto: "", monto: "", fecha: "" });
   const [savedMsg, setSavedMsg]   = useState(false);
   const [unsaved, setUnsaved]     = useState(false);
+  const [tarjetasMontos, setTarjetasMontos]   = useState({});
+  const [editandoTarjeta, setEditandoTarjeta] = useState(null);
+  const [inputTarjeta, setInputTarjeta]       = useState({ pesos: "", usd: "" });
+  const [expandedMes, setExpandedMes]         = useState(null);
   const [expandedMes, setExpandedMes] = useState(null);
   const [editMonto, setEditMonto] = useState("");
 
