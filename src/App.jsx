@@ -305,8 +305,8 @@ export default function Dashboard() {
   }, [plan, pagados, subGastos, ingresos]);
 
   const guardarTodo = async () => {
-    const data = JSON.stringify({ plan: safePlan, pagados: safePagados, subGastos: safeSubGastos, ingresos: safeIngresos, tarjetasMontos });
     setSavedMsg("saving");
+    const data = JSON.stringify({ plan: safePlan, pagados: safePagados, subGastos: safeSubGastos, ingresos: safeIngresos, tarjetasMontos });
     try {
       try { await window.storage.set("finanzas_junio26", data); } catch(e) {}
       try { localStorage.setItem("finanzas_junio26", data); } catch(e) {}
@@ -585,8 +585,10 @@ export default function Dashboard() {
                 <div key={item.id} style={{ marginBottom: 8 }}>
                   <div
                     onClick={() => { if (item.expandible) setExpandido(isOpen ? null : item.id); else togglePago(item.id); }}
-                  onDoubleClick={() => { if (item.editable && !esPagado) { setEditandoTarjeta(editandoTarjeta === item.id ? null : item.id); setInputTarjeta({ pesos: String(tarjetasMontos[item.id]?.pesos || ""), usd: String(tarjetasMontos[item.id]?.usd || "") }); } }}
-                  onDoubleClick={() => { if (item.variable && !esPagado) setEditandoItem(editandoItem === item.id ? null : item.id); }}
+                  onDoubleClick={() => {
+                    if (item.editable && !esPagado) { setEditandoTarjeta(editandoTarjeta === item.id ? null : item.id); setInputTarjeta({ pesos: String(tarjetasMontos[item.id]?.pesos || ""), usd: String(tarjetasMontos[item.id]?.usd || "") }); }
+                    else if (item.variable && !esPagado) { setEditandoItem(editandoItem === item.id ? null : item.id); }
+                  }}
                     style={{
                       background: esPagado ? '#f0fdf4' : C.surface, borderRadius: isOpen || showUte ? "14px 14px 0 0" : 14,
                       padding: "14px 14px", boxShadow: C.shadow,
