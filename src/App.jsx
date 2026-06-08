@@ -40,7 +40,6 @@ const PLAN_DEFAULT = [
   { id: "gascom",       fecha: "20/06",       concepto: "Gastos comunes",      monto: 4500,  tipo: "fijo" },
   { id: "telfijo",      fecha: "20/06",       concepto: "Teléfono fijo",       monto: 1700,  tipo: "fijo",    variable: true },
   { id: "celguille",    fecha: "20/06",       concepto: "Cel Guillermina",     monto: 620,   tipo: "fijo" },
-  { id: "calistenia",   fecha: "~20/06",       concepto: "Calistenia",          monto: 1990,  tipo: "fijo" },
   { id: "ute",          fecha: "29/06",       concepto: "UTE (luz)",           monto: 4500,  tipo: "fijo",    variable: true },
   { id: "debsantander", fecha: "30/06",       concepto: "Débito Santander",    monto: 875,   tipo: "fijo" },
   { id: "comida",       fecha: "Todo el mes", concepto: "Comida + Transporte", monto: 28000, tipo: "variable", expandible: true },
