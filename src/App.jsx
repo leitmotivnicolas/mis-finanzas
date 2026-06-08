@@ -21,6 +21,7 @@ const C = {
 const BANK = { itau:"#FF6200", scotia:"#EC111A", bbva:"#004B9E", santander:"#CC0000", debsantander:"#CC0000" };
 
 const PLAN_BASE = [
+  { id:"comida",      fecha:"Todo el mes", concepto:"Comida + Transporte", monto:28000, tipo:"variable", expandible:true },
   { id:"mesada",      fecha:"1/06",   concepto:"Mesada Guillermina",  monto:7500,  tipo:"fijo",    expandible:true },
   { id:"itau",        fecha:"~4/06",  concepto:"Itaú",                monto:0,     tipo:"tarjeta", editable:true },
   { id:"scotia",      fecha:"~7/06",  concepto:"Scotiabank",          monto:0,     tipo:"tarjeta", editable:true },
@@ -31,11 +32,9 @@ const PLAN_BASE = [
   { id:"gascom",      fecha:"20/06",  concepto:"Gastos comunes",      monto:4500,  tipo:"fijo" },
   { id:"telfijo",     fecha:"20/06",  concepto:"Teléfono fijo",       monto:1700,  tipo:"fijo",    variable:true },
   { id:"celguille",   fecha:"20/06",  concepto:"Cel Guillermina",     monto:620,   tipo:"fijo" },
-  { id:"cosem",       fecha:"~20/06", concepto:"Médica Uruguaya",      monto:3800,  tipo:"fijo" },
-  { id:"lentes",      fecha:"~20/06", concepto:"Lentes (2/10)",       monto:2080,  tipo:"fijo" },
+  { id:"cosem",       fecha:"~5/06",  concepto:"Médica Uruguaya",      monto:3800,  tipo:"fijo" },
   { id:"ute",         fecha:"29/06",  concepto:"UTE (luz)",           monto:4500,  tipo:"fijo",    variable:true },
   { id:"debsantander",fecha:"30/06",  concepto:"Débito Santander",    monto:875,   tipo:"fijo" },
-  { id:"comida",      fecha:"Todo el mes", concepto:"Comida + Transporte", monto:28000, tipo:"variable", expandible:true },
 ];
 
 const TARJETAS = [
@@ -55,8 +54,7 @@ const FIJOS = [
   { concepto:"Cel Guillermina",    monto:620,   vto:20, icono:"📱" },
   { concepto:"Tributos",           monto:650,   vto:14, icono:"🏛️" },
   { concepto:"Débito Santander",   monto:875,   vto:30, icono:"💳" },
-  { concepto:"Médica Uruguaya",    monto:3800,  vto:20, icono:"🏥" },
-  { concepto:"Lentes",             monto:2080,  vto:20, icono:"👓" },
+  { concepto:"Médica Uruguaya",    monto:3800,  vto:5,  icono:"🏥" },
 ];
 
 const SUSCS = [
@@ -134,19 +132,19 @@ export default function App() {
   const plan = [...PLAN_BASE, ...extras];
 
   const gM = (item) => {
-    if (item.editable)   return tMontos[item.id]?.p || 0;
+    if (item.editable)   return (tMontos[item.id]?.p || 0) + Math.round((tMontos[item.id]?.u || 0) * TC);
     if (item.variable)   return varM[item.id] || item.monto;
-    if (item.expandible) return Math.max(0, item.monto - (subs[item.id]||[]).reduce((a,b)=>a+b.m,0));
+    if (item.expandible) return item.monto - (subs[item.id]||[]).reduce((a,b)=>a+b.m,0);
     return item.monto;
   };
 
   const facturado  = ingresos.reduce((a,b)=>a+b.m,0);
   const subTotal   = Object.values(subs).flat().reduce((a,b)=>a+b.m,0);
-  const pagadoSum  = plan.filter(i=>pagados.includes(i.id)&&i.id!=="mesada").reduce((a,b)=>a+gM(b)+(b.editable?(tMontos[b.id]?.u||0)*TC:0),0);
+  const pagadoSum  = plan.filter(i=>pagados.includes(i.id)&&i.id!=="mesada").reduce((a,b)=>a+gM(b),0);
   const disponible = facturado - pagadoSum - subTotal;
-  const porPagar   = plan.filter(i=>!pagados.includes(i.id)).reduce((a,b)=>a+gM(b)+(b.editable&&!pagados.includes(b.id)?(tMontos[b.id]?.u||0)*TC:0),0);
-  const totalPago  = plan.filter(i=>pagados.includes(i.id)).reduce((a,b)=>a+gM(b)+(b.editable?(tMontos[b.id]?.u||0)*TC:0),0);
-  const totalMes   = plan.reduce((a,b)=>a+gM(b)+(b.editable?(tMontos[b.id]?.u||0)*TC:0),0);
+  const porPagar   = plan.filter(i=>!pagados.includes(i.id)).reduce((a,b)=>a+gM(b),0);
+  const totalPago  = plan.filter(i=>pagados.includes(i.id)).reduce((a,b)=>a+gM(b),0);
+  const totalMes   = plan.reduce((a,b)=>a+Math.max(0,gM(b)),0);
   const pct        = totalMes>0 ? Math.min(100,Math.round(((totalPago+subTotal)/totalMes)*100)) : 0;
   const necesita   = Math.max(0, porPagar - disponible);
 
