@@ -21,10 +21,13 @@ const C = {
 const BANK = { itau:"#FF6200", scotia:"#EC111A", bbva:"#004B9E", santander:"#CC0000", debsantander:"#CC0000" };
 
 const PLAN_BASE = [
-  { id:"comida",      fecha:"Todo el mes", concepto:"Comida + Transporte", monto:28000, tipo:"variable", expandible:true },
-  { id:"mesada",      fecha:"1/06",   concepto:"Mesada Guillermina",  monto:7500,  tipo:"fijo",    expandible:true },
+  { id:"comida",      fecha:"Todo el mes", concepto:"Comida",              monto:28000, tipo:"variable", expandible:true },
+  { id:"mesada",      fecha:"Todo el mes", concepto:"Mesada Guillermina",  monto:7500,  tipo:"fijo",    expandible:true },
+  { id:"transporte",  fecha:"Todo el mes", concepto:"Transporte",          monto:3500,  tipo:"variable", expandible:true },
+  { id:"extras",      fecha:"Todo el mes", concepto:"Extras y otros",      monto:0,     tipo:"variable", expandible:true, sinTope:true },
+  { id:"cosem",       fecha:"~5/06",  concepto:"Médica Uruguaya",     monto:3800,  tipo:"fijo" },
   { id:"itau",        fecha:"~4/06",  concepto:"Itaú",                monto:0,     tipo:"tarjeta", editable:true },
-  { id:"scotia",      fecha:"~7/06",  concepto:"Scotiabank",          monto:0,     tipo:"tarjeta", editable:true },
+  { id:"scotia",      fecha:"~8/06",  concepto:"Scotiabank",          monto:0,     tipo:"tarjeta", editable:true },
   { id:"alquiler",    fecha:"10/06",  concepto:"Alquiler",            monto:32000, tipo:"fijo",    urgente:true },
   { id:"tributos",    fecha:"14/06",  concepto:"Tributos",            monto:650,   tipo:"fijo" },
   { id:"bbva",        fecha:"~15/06", concepto:"BBVA",                monto:0,     tipo:"tarjeta", editable:true },
@@ -32,7 +35,6 @@ const PLAN_BASE = [
   { id:"gascom",      fecha:"20/06",  concepto:"Gastos comunes",      monto:4500,  tipo:"fijo" },
   { id:"telfijo",     fecha:"20/06",  concepto:"Teléfono fijo",       monto:1700,  tipo:"fijo",    variable:true },
   { id:"celguille",   fecha:"20/06",  concepto:"Cel Guillermina",     monto:620,   tipo:"fijo" },
-  { id:"cosem",       fecha:"~5/06",  concepto:"Médica Uruguaya",      monto:3800,  tipo:"fijo" },
   { id:"ute",         fecha:"29/06",  concepto:"UTE (luz)",           monto:4500,  tipo:"fijo",    variable:true },
   { id:"debsantander",fecha:"30/06",  concepto:"Débito Santander",    monto:875,   tipo:"fijo" },
 ];
@@ -68,7 +70,7 @@ const SUSCS = [
   { concepto:"Calistenia",         tarjeta:"Santander", color:"#CC0000", monto:1900, usd:0,     icono:"🏋️" },
 ];
 
-const ICONOS = { mesada:"👧",itau:"💳",scotia:"💳",alquiler:"🏠",tributos:"🏛️",bbva:"💳",santander:"💳",gascom:"🏢",telfijo:"📞",celguille:"📱",cosem:"🏥",lentes:"👓",ute:"💡",debsantander:"💳",comida:"🍔" };
+const ICONOS = { transporte:"🚗", extras:"✨", mesada:"👧",itau:"💳",scotia:"💳",alquiler:"🏠",tributos:"🏛️",bbva:"💳",santander:"💳",gascom:"🏢",telfijo:"📞",celguille:"📱",cosem:"🏥",lentes:"👓",ute:"💡",debsantander:"💳",comida:"🍔" };
 
 export default function App() {
   const [ready, setReady]     = useState(false);
@@ -134,7 +136,7 @@ export default function App() {
   const gM = (item) => {
     if (item.editable)   return (tMontos[item.id]?.p || 0) + Math.round((tMontos[item.id]?.u || 0) * TC);
     if (item.variable)   return varM[item.id] || item.monto;
-    if (item.expandible) return item.monto - (subs[item.id]||[]).reduce((a,b)=>a+b.m,0);
+    if (item.expandible) { const spent=(subs[item.id]||[]).reduce((a,b)=>a+b.m,0); return item.sinTope ? spent : item.monto - spent; }
     return item.monto;
   };
 
@@ -305,7 +307,7 @@ export default function App() {
                     <div style={{fontSize:14,fontWeight:700,color:paid?C.success:item.editable?(BANK[item.id]||C.primary):item.urgente?C.danger:C.text2}}>
                       {item.editable?(monto>0?"$"+fmt(monto):<span style={{fontSize:11,color:C.text3}}>—</span>):"$"+fmt(item.expandible?restante:monto)}
                     </div>
-                    {item.expandible&&<div style={{fontSize:9,color:C.text3}}>de ${fmt(item.monto)}</div>}
+                    {item.expandible&&!item.sinTope&&<div style={{fontSize:9,color:C.text3}}>de ${fmt(item.monto)}</div>}
                     {item.editable&&tMontos[item.id]?.u>0&&<div style={{fontSize:9,color:C.purple}}>+ U$S {tMontos[item.id].u.toFixed(2)}</div>}
                   </div>
                   {item.tipo==="extra"&&!paid&&<div onClick={e=>{e.stopPropagation();setExtras(p=>p.filter(i=>i.id!==item.id));}} style={{color:C.text3,fontSize:12,padding:"4px 6px",cursor:"pointer"}}>✕</div>}
